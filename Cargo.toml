@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+members = ["alpacker", "alpacker-packer"]
+
+[workspace.dependencies]
+alpacker = { path = "./alpacker", default-features = false }
+alpacker-packer = { path = "./alpacker-packer", default-features = false }
+
+serde = { version = "1.0", features = ["derive"] }
+tar = "0.4"
+thiserror = "2.0"
+toml = "0.8"
+zstd = "0.13"
+twox-hash = "2.1"
+testdir = "0.9"
