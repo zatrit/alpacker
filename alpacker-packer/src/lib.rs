@@ -6,6 +6,7 @@ use alpacker::{Assets, Pack, PackMeta};
 use std::{
     collections::HashMap,
     env,
+    error::Error,
     fs::{self, File, create_dir},
     io::{self, Write},
     path::{Path, PathBuf},
@@ -20,7 +21,9 @@ pub trait MakePack: Pack {
 }
 
 pub trait Transform {
-    fn transform(&mut self, path: impl AsRef<Path>) -> io::Result<()>;
+    type Error: Error;
+
+    fn transform(&mut self, path: impl AsRef<Path>) -> Result<(), Self::Error>;
 }
 
 pub struct TransformTag {
@@ -86,7 +89,7 @@ impl PackBuilder {
     }
 
     #[inline]
-    pub fn transform(self, transformer: &mut impl Transform) -> io::Result<Self> {
+    pub fn transform<T: Transform>(self, transformer: &mut T) -> Result<Self, T::Error> {
         transformer.transform(&self.temp_dir)?;
         Ok(self)
     }

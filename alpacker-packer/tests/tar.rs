@@ -2,7 +2,7 @@ use std::error::Error;
 use testdir::testdir;
 
 use alpacker::{Assets, Pack, TarZstPack};
-use alpacker_packer::{AssetsBuilder, PackBuilder};
+use alpacker_packer::{AssetsBuilder, PackBuilder, transform::OxipngTransform};
 
 const ASSETS_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../test-assets/");
 
@@ -12,7 +12,11 @@ fn test_create_tar_zst() -> Result<(), Box<dyn Error>> {
     let test_dir = testdir!();
 
     // Write manifest and packs
-    let pack = PackBuilder::new("test")?.copy_from(ASSETS_DIR)?;
+    let mut oxipng = OxipngTransform(oxipng::Options::max_compression());
+
+    let pack = PackBuilder::new("test")?
+        .copy_from(ASSETS_DIR)?
+        .transform(&mut oxipng)?;
 
     AssetsBuilder::new(&test_dir, "./")?
         .add_pack::<TarZstPack>("test", &pack)?
