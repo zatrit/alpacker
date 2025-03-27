@@ -9,17 +9,26 @@ use crate::{DefaultHasher, Pack, Raw};
 
 /// TAR archive implementation of the Pack trait
 pub struct TarPack<S = DefaultHasher> {
-    file_contents: HashMap<PathBuf, Vec<u8>, S>,
+    /// Stores the contents of the files in the archive as a hash map,
+    /// where the key is the file path and the value is the file content.
+    contents: HashMap<PathBuf, Vec<u8>, S>,
+
+    /// Keeps track of files that were skipped during extraction.
     skipped: Vec<Skipped>,
 }
 
+/// Enum representing the reasons why a file was skipped.
 #[derive(Debug)]
 pub enum Skipped {
+    /// The path does not point to a valid file (e.g., it could be a directory).
     NotAFile(PathBuf),
+
+    /// An error occurred while reading the file.
     Error(io::Error),
 }
 
 impl TarPack {
+    /// Returns a reference to the list of skipped files.
     pub const fn skipped(&self) -> &Vec<Skipped> {
         &self.skipped
     }
@@ -29,11 +38,11 @@ impl<S: BuildHasher + Default> Pack for TarPack<S> {
     fn get_raw(&mut self, path: impl AsRef<Path>) -> io::Result<Raw<impl Read + Seek>> {
         let path = path.as_ref();
 
-        match self.file_contents.get(path) {
+        match self.contents.get(path) {
             Some(raw) => Ok(Raw {
                 path: path.to_path_buf(),
-                size_hint: Some(raw.len()),
-                read: io::Cursor::new(raw),
+                size_hint: Some(raw.len()), // Provide an estimated file size
+                read: io::Cursor::new(raw), // Wrap the file contents in an in-memory reader
             }),
             None => Err(io::Error::new(
                 io::ErrorKind::NotFound,
@@ -45,14 +54,16 @@ impl<S: BuildHasher + Default> Pack for TarPack<S> {
     fn load(read: impl Read) -> io::Result<Self> {
         let mut tar = tar::Archive::new(read);
 
-        let mut file_contents = HashMap::with_hasher(S::default());
+        // Create a hash map for storing file contents with the specified hasher.
+        let mut contents = HashMap::with_hasher(S::default());
+        // List of skipped files (only used if the "collect-errors" feature is enabled).
         #[allow(unused_mut)]
         let mut skipped = Vec::new();
 
+        // Iterate over each entry in the TAR archive.
         for entry in tar.entries()? {
             let entry = match entry {
                 Ok(entry) => entry,
-                #[allow(unused)]
                 Err(err) => {
                     #[cfg(feature = "collect-errors")]
                     skipped.push(Skipped::Error(err));
@@ -68,16 +79,14 @@ impl<S: BuildHasher + Default> Pack for TarPack<S> {
                 continue;
             }
 
+            // Read the file contents into a buffer.
             let size = entry.size();
             let mut buf = Vec::with_capacity(size as usize);
             entry.take(size).read_to_end(&mut buf)?;
 
-            file_contents.insert(path, buf);
+            contents.insert(path, buf);
         }
 
-        Ok(Self {
-            file_contents,
-            skipped,
-        })
+        Ok(Self { contents, skipped })
     }
 }

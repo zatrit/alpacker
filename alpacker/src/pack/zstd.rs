@@ -5,22 +5,28 @@ use std::{
 
 use crate::{Pack, Raw};
 
+/// A wrapper around a `Pack` implementation that applies Zstd compression.
+/// This allows for transparent decompression of archives compressed with Zstd.
 pub struct Zstd<P: Pack>(P);
 
 impl<P: Pack> Pack for Zstd<P> {
     fn load(read: impl Read) -> io::Result<Self> {
-        let zstd = zstd::Decoder::new(read)?;
-        P::load(zstd).map(Self)
+        let zstd = zstd::Decoder::new(read)?; // Create a Zstd decoder to decompress the input stream.
+        P::load(zstd).map(Self) // Load the decompressed archive using the underlying `Pack` implementation.
     }
 
     fn get_raw(&mut self, path: impl AsRef<std::path::Path>) -> io::Result<Raw<impl Read + Seek>> {
-        self.0.get_raw(path)
+        self.0.get_raw(path) // Delegate the call to the inner `Pack` implementation.
     }
 }
 
 impl<P: Pack> Deref for Zstd<P> {
     type Target = P;
 
+    /// Provides immutable access to the underlying `Pack` implementation.
+    ///
+    /// This allows `Zstd<P>` to behave like `P`, enabling access to its methods
+    /// without requiring explicit dereferencing.
     fn deref(&self) -> &Self::Target {
         &self.0
     }
