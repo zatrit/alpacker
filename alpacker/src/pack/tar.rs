@@ -1,17 +1,15 @@
 use std::{
     collections::HashMap,
-    hash::BuildHasherDefault,
-    io::{self, Read},
+    hash::BuildHasher,
+    io::{self, Read, Seek},
     path::{Path, PathBuf},
 };
-use twox_hash::XxHash64;
 
-use crate::{Pack, Raw};
+use crate::{DefaultHasher, Pack, Raw};
 
-type XxHashMap<K, V> = HashMap<K, V, BuildHasherDefault<XxHash64>>;
-
-pub struct TarPack {
-    file_contents: XxHashMap<PathBuf, Vec<u8>>,
+/// TAR archive implementation of the Pack trait
+pub struct TarPack<S = DefaultHasher> {
+    file_contents: HashMap<PathBuf, Vec<u8>, S>,
     skipped: Vec<Skipped>,
 }
 
@@ -27,8 +25,8 @@ impl TarPack {
     }
 }
 
-impl Pack for TarPack {
-    fn get_raw(&mut self, path: impl AsRef<Path>) -> io::Result<Raw<impl Read>> {
+impl<S: BuildHasher + Default> Pack for TarPack<S> {
+    fn get_raw(&mut self, path: impl AsRef<Path>) -> io::Result<Raw<impl Read + Seek>> {
         let path = path.as_ref();
 
         match self.file_contents.get(path) {
@@ -47,7 +45,7 @@ impl Pack for TarPack {
     fn load(read: impl Read) -> io::Result<Self> {
         let mut tar = tar::Archive::new(read);
 
-        let mut file_contents = HashMap::with_hasher(BuildHasherDefault::new());
+        let mut file_contents = HashMap::with_hasher(S::default());
         #[allow(unused_mut)]
         let mut skipped = Vec::new();
 

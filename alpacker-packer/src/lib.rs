@@ -2,26 +2,24 @@ pub mod tar;
 pub mod transform;
 pub mod zstd;
 
-use alpacker::{Assets, Pack, PackMeta};
+use alpacker::{Assets, JsonIoError, MANIFEST_FILE, Pack, PackMeta};
 use std::{
     collections::HashMap,
     env,
-    error::Error,
     fs::{self, File, create_dir},
-    io::{self, Write},
+    io,
     path::{Path, PathBuf},
     time::{SystemTime, UNIX_EPOCH},
 };
-use thiserror::Error;
 
 pub trait MakePack: Pack {
-    fn make(root: impl AsRef<Path>, write: impl Write) -> io::Result<()>;
+    fn make(root: impl AsRef<Path>, write: impl io::Write) -> io::Result<()>;
 
     fn suffix() -> String;
 }
 
 pub trait Transform {
-    type Error: Error;
+    type Error;
 
     fn transform(&mut self, path: impl AsRef<Path>) -> Result<(), Self::Error>;
 }
@@ -34,15 +32,6 @@ pub struct TransformTag {
 pub struct PackBuilder {
     temp_dir: PathBuf,
     remove_dir: bool,
-}
-
-#[derive(Debug, Error)]
-pub enum ManifestError {
-    #[error("I/O error: {0}")]
-    Io(#[from] io::Error),
-
-    #[error("TOML serializer error: {0}")]
-    TomlSer(#[from] toml::ser::Error),
 }
 
 // https://stackoverflow.com/a/65192210
@@ -101,7 +90,7 @@ impl PackBuilder {
     }
 
     #[inline]
-    pub fn make_pack<P: MakePack>(&self, write: impl Write) -> io::Result<()> {
+    pub fn make_pack<P: MakePack>(&self, write: impl io::Write) -> io::Result<()> {
         P::make(&self.temp_dir, write)
     }
 }
@@ -152,13 +141,13 @@ impl AssetsBuilder {
         Ok(self)
     }
 
-    pub fn write_manifest(self) -> Result<(), ManifestError> {
-        let manifest_path = self.root.join("manifest.toml");
+    pub fn write_manifest(self) -> Result<(), JsonIoError> {
+        let manifest_path = self.root.join(MANIFEST_FILE);
 
         let assets = Assets::new(self.packs_dir, self.packs);
 
-        let toml_string = toml::to_string_pretty(&assets)?;
-        fs::write(manifest_path, toml_string)?;
+        let file = File::create_new(manifest_path)?;
+        serde_json::to_writer(file, &assets)?;
 
         Ok(())
     }

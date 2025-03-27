@@ -1,15 +1,15 @@
 use std::{
     fs::{File, read_dir},
-    io::{self, Write},
+    io,
     path::Path,
 };
 
-use alpacker::tar::TarPack;
+use alpacker::pack::TarPack;
 
 use crate::MakePack;
 
 impl MakePack for TarPack {
-    fn make(root: impl AsRef<Path>, write: impl Write) -> io::Result<()> {
+    fn make(root: impl AsRef<Path>, write: impl io::Write) -> io::Result<()> {
         let root = root.as_ref();
         let mut tar = tar::Builder::new(write);
 

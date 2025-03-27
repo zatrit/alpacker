@@ -21,6 +21,7 @@ pub enum OxipngError {
     Oxipng(#[from] oxipng::PngError),
 }
 
+#[repr(transparent)]
 pub struct OxipngTransform(pub oxipng::Options);
 
 impl Transform for OxipngTransform {
@@ -44,3 +45,5 @@ impl Transform for OxipngTransform {
         Ok(())
     }
 }
+
+// texture atlas transform

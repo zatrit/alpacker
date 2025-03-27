@@ -1,12 +1,20 @@
+#[cfg(feature = "aseprite")]
+pub mod aseprite;
+
+#[cfg(feature = "image")]
+pub mod image;
+
 use std::{
     io::{self, Read},
     path::Path,
 };
 
-use crate::{Asset, Pack};
+use crate::{Asset, AssetResult, Pack};
 
 impl Asset for String {
-    fn load(pack: &mut impl Pack, path: impl AsRef<Path>) -> io::Result<Self> {
+    type Error = io::Error;
+
+    fn load(pack: &mut impl Pack, path: impl AsRef<Path>) -> AssetResult<Self> {
         let mut raw = pack.get_raw(path)?;
 
         let size = raw.size_hint.unwrap_or(0);

@@ -1,0 +1,6 @@
+{
+  "packs_dir": "./",
+  "packs": {
+    "test": "test.tar.zst"
+  }
+}
