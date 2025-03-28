@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
     fs::{self, File},
-    io,
+    hash, io,
     path::{Path, PathBuf},
 };
 use thiserror::Error;
@@ -16,10 +16,10 @@ pub const MANIFEST_FILE: &'static str = "manifest.json";
 // Defines the default hasher to use for hash maps.
 // Uses `twox-hash` if the feature is enabled, otherwise falls back to `RandomState`.
 #[cfg(feature = "twox-hash")]
-pub type DefaultHasher = std::hash::BuildHasherDefault<twox_hash::XxHash64>;
+pub type DefaultHasher = hash::BuildHasherDefault<twox_hash::XxHash64>;
 
 #[cfg(not(feature = "twox-hash"))]
-pub type DefaultHasher = std::hash::RandomState;
+pub type DefaultHasher = hash::RandomState;
 
 /// A type alias for [Asset] loading results, associating each asset with its error type.
 #[allow(type_alias_bounds)]
@@ -71,10 +71,8 @@ impl Assets {
     /// * `packs_dir` - The root directory where asset packs are stored.
     /// * `packs` - A mapping of pack names to their metadata.
     pub fn new(packs_dir: impl Into<PathBuf>, packs: HashMap<String, PackMeta>) -> Self {
-        Self {
-            packs_dir: packs_dir.into(),
-            packs,
-        }
+        let packs_dir = packs_dir.into();
+        Self { packs_dir, packs }
     }
 
     /// Loads asset metadata from a directory containing a manifest file.
