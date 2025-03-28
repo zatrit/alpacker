@@ -1,4 +1,5 @@
 use std::{
+    borrow::Cow,
     fs::{File, read_dir},
     io,
     path::Path,
@@ -48,7 +49,7 @@ impl MakePack for TarPack {
         tar.finish()
     }
 
-    fn suffix() -> String {
-        String::from(".tar")
+    fn suffix() -> Cow<'static, str> {
+        Cow::Borrowed(".tar")
     }
 }

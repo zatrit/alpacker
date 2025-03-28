@@ -1,4 +1,4 @@
-use std::{io, path::Path};
+use std::{borrow::Cow, io, path::Path};
 
 use alpacker::pack::Zstd;
 
@@ -20,7 +20,7 @@ impl<P: MakePack> MakePack for Zstd<P> {
         P::make(root, zstd)
     }
 
-    fn suffix() -> String {
-        format!("{}.zst", P::suffix())
+    fn suffix() -> Cow<'static, str> {
+        Cow::Owned(format!("{}.zst", P::suffix()))
     }
 }

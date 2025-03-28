@@ -4,6 +4,7 @@ pub mod zstd;
 
 use alpacker::{Assets, JsonIoError, MANIFEST_FILE, Pack, PackMeta};
 use std::{
+    borrow::Cow,
     collections::HashMap,
     env,
     fs::{self, File, create_dir},
@@ -20,7 +21,7 @@ pub trait MakePack: Pack {
     fn make(root: impl AsRef<Path>, write: impl io::Write) -> io::Result<()>;
 
     /// Returns the file extension (suffix) for the package type.
-    fn suffix() -> String;
+    fn suffix() -> Cow<'static, str>;
 }
 
 /// Trait for applying transformations to files in a directory.
@@ -45,12 +46,6 @@ pub struct PackBuilder {
 /// Ensures that `dst` is a directory before proceeding.
 fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> io::Result<()> {
     let dst = dst.as_ref();
-    if !fs::metadata(dst)?.is_dir() {
-        return Err(io::Error::new(
-            io::ErrorKind::NotFound,
-            format!("Not a directory: {:?}", dst),
-        ));
-    }
 
     for entry in fs::read_dir(src)? {
         let entry = entry?;
