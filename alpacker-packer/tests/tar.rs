@@ -33,7 +33,7 @@ fn test_create() -> Result<(), Box<dyn Error>> {
 
     let mut pack = assets.load_pack::<TarZstPack>("test")?;
     assert!(
-        pack.skipped().len() == 0,
+        pack.skipped().is_empty(),
         "Expected no skipped files, but some were skipped"
     );
 
