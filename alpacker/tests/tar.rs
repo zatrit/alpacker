@@ -3,7 +3,7 @@ use std::error::Error;
 use alpacker::{Assets, Pack, pack::TarZstPack};
 use rstest::{fixture, rstest};
 
-const SAMPLES_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../test-samples/");
+const SAMPLES_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/samples/");
 
 type TestResult = Result<(), Box<dyn Error>>;
 

@@ -1,6 +1,10 @@
+#[cfg(feature = "tar")]
 pub mod tar;
-pub mod transform;
+
+#[cfg(feature = "zstd")]
 pub mod zstd;
+
+pub mod transform;
 
 use alpacker::{Assets, JsonIoError, MANIFEST_FILE, Pack, PackMeta};
 use std::{
@@ -105,6 +109,10 @@ impl PackBuilder {
         let file_path = self.temp_dir.join(path);
         fs::write(file_path, content)?;
         Ok(())
+    }
+
+    pub const fn temp_dir(&self) -> &PathBuf {
+        &self.temp_dir
     }
 }
 

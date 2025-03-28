@@ -64,6 +64,7 @@ impl<S: BuildHasher + Default> Pack for TarPack<S> {
         for entry in tar.entries()? {
             let entry = match entry {
                 Ok(entry) => entry,
+                #[allow(unused_variables)]
                 Err(err) => {
                     #[cfg(feature = "collect-errors")]
                     skipped.push(Skipped::Error(err));

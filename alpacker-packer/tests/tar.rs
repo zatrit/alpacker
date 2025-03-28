@@ -1,10 +1,10 @@
 use std::error::Error;
 use testdir::testdir;
 
-use alpacker::{pack::TarZstPack, Assets, Pack, MANIFEST_FILE};
+use alpacker::{Assets, MANIFEST_FILE, Pack, pack::TarZstPack};
 use alpacker_packer::{AssetsBuilder, PackBuilder, transform::OxipngTransform};
 
-const ASSETS_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../test-assets/");
+const ASSETS_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/assets/");
 
 #[test]
 fn test_create() -> Result<(), Box<dyn Error>> {
