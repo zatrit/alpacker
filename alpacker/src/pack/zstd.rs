@@ -1,6 +1,7 @@
 use std::{
     io::{self, Read, Seek},
     ops::Deref,
+    path::{Path, PathBuf},
 };
 
 use crate::{Pack, Raw};
@@ -15,8 +16,14 @@ impl<P: Pack> Pack for Zstd<P> {
         P::load(zstd).map(Self) // Load the decompressed archive using the underlying `Pack` implementation.
     }
 
-    fn get_raw(&mut self, path: impl AsRef<std::path::Path>) -> io::Result<Raw<impl Read + Seek>> {
+    #[inline]
+    fn get_raw(&mut self, path: impl AsRef<Path>) -> io::Result<Raw<impl Read + Seek>> {
         self.0.get_raw(path) // Delegate the call to the inner `Pack` implementation.
+    }
+
+    #[inline]
+    fn exists(&self, path: impl AsRef<PathBuf>) -> bool {
+        self.0.exists(path)
     }
 }
 

@@ -164,4 +164,6 @@ pub trait Pack: Sized {
     fn get<A: Asset>(&mut self, path: impl AsRef<Path>) -> Result<A, A::Error> {
         A::load(self, path)
     }
+
+    fn exists(&self, path: impl AsRef<PathBuf>) -> bool;
 }
