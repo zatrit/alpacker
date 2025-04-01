@@ -81,6 +81,7 @@ impl Assets {
     /// * `path` - The directory containing the `manifest.json` file.
     ///
     /// # Returns
+    /// [Ok]
     /// * `Ok(Assets)` if the manifest is successfully loaded.
     /// * `Err(JsonIoError)` if an I/O or deserialization error occurs.
     pub fn load_from_dir(path: impl AsRef<Path>) -> Result<Self, JsonIoError> {

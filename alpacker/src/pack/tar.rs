@@ -8,6 +8,7 @@ use std::{
 use crate::{DefaultHasher, Pack, Raw};
 
 /// TAR archive implementation of the Pack trait
+#[derive(Debug)]
 pub struct TarPack<S = DefaultHasher> {
     /// Stores the contents of the files in the archive as a hash map,
     /// where the key is the file path and the value is the file content.

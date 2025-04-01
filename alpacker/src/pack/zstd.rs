@@ -8,6 +8,7 @@ use crate::{Pack, Raw};
 
 /// A wrapper around a [Pack] implementation that applies [zstd] compression.
 /// This allows for transparent decompression of archives compressed with [zstd].
+#[derive(Debug)]
 pub struct Zstd<P: Pack>(P);
 
 impl<P: Pack> Pack for Zstd<P> {
