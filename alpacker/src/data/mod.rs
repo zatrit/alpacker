@@ -4,6 +4,9 @@ pub mod aseprite;
 #[cfg(feature = "image")]
 pub mod image;
 
+#[cfg(feature = "raylib")]
+pub mod raylib;
+
 use std::{
     io::{Error, Read},
     path::Path,
