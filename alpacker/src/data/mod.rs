@@ -5,14 +5,14 @@ pub mod aseprite;
 pub mod image;
 
 use std::{
-    io::{self, Read},
+    io::{Error, Read},
     path::Path,
 };
 
 use crate::{Asset, AssetResult, Pack};
 
 impl Asset for String {
-    type Error = io::Error;
+    type Error = Error;
 
     fn load(pack: &mut impl Pack, path: impl AsRef<Path>) -> AssetResult<Self> {
         let mut raw = pack.get_raw(path)?;

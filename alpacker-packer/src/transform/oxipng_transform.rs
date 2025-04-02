@@ -1,5 +1,3 @@
-pub use oxipng;
-
 use std::path::Path;
 
 use glob::{GlobError, PatternError, glob};
@@ -45,5 +43,3 @@ impl Transform for OxipngTransform {
         Ok(())
     }
 }
-
-// texture atlas transform
