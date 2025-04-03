@@ -19,8 +19,6 @@ raylib = { version = "5.5", optional = true, default-features = false }
 rstest = { workspace = true }
 
 [features]
-default = ["collect-errors", "tar", "zstd", "image", "twox-hash"]
+default = ["collect-errors", "tar", "zstd", "twox-hash"]
 nobuild = ["raylib?/nobuild"]
 collect-errors = []
-
-aseprite = ["image", "dep:aseprite"]

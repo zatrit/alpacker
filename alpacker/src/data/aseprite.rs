@@ -7,7 +7,6 @@ All trademarks and logos, including "Aseprite", are the property of their respec
 and their associated image data. It handles path resolution, error propagation, and asset loading in a generic way. */
 
 use aseprite::SpritesheetData;
-use image::{DynamicImage, ImageError};
 use std::{
     error::Error,
     io,
@@ -28,11 +27,11 @@ impl Asset for SpritesheetData {
 }
 
 /// Trait for assets that can provide associated image paths
-pub trait ImagePath: Asset {
+pub trait SpriteMeta: Asset {
     fn image_path(&self, meta_path: impl AsRef<Path>) -> Option<PathBuf>;
 }
 
-impl ImagePath for SpritesheetData {
+impl SpriteMeta for SpritesheetData {
     fn image_path(&self, meta_path: impl AsRef<Path>) -> Option<PathBuf> {
         let empty = PathBuf::new();
 
@@ -44,37 +43,39 @@ impl ImagePath for SpritesheetData {
 }
 
 /// Container combining loaded metadata and its associated image
-pub struct Sprite<ImagePath: Asset>
+pub struct Sprite<I: Asset, M: Asset = SpritesheetData>
 where
-    ImagePath::Error: Error,
+    I::Error: Error,
+    M::Error: Error,
 {
-    pub meta: ImagePath,
-    pub image: Option<DynamicImage>,
+    pub image: Option<I>,
+    pub meta: M,
 }
 
 /// Unified error type for sprite loading operations
 #[derive(Debug, Error)]
-pub enum SpriteError<M: Error> {
+pub enum SpriteError<M: Error, I: Error> {
     #[error("I/O error: {0}")]
     Io(#[from] io::Error),
 
     #[error("Metadata error: {0}")]
-    MetaLoad(M),
+    Meta(M),
 
     #[error("Image error: {0}")]
-    Image(#[from] ImageError),
+    Image(I),
 }
 
-impl<M: ImagePath> Asset for Sprite<M>
+impl<I: Asset, M: SpriteMeta> Asset for Sprite<I, M>
 where
+    I::Error: Error,
     M::Error: Error,
 {
-    type Error = SpriteError<M::Error>;
+    type Error = SpriteError<M::Error, I::Error>;
 
     fn load(pack: &mut impl Pack, path: impl AsRef<Path>) -> AssetResult<Self> {
-        let meta = M::load(pack, &path).map_err(SpriteError::MetaLoad)?;
+        let meta = M::load(pack, &path).map_err(SpriteError::Meta)?;
         let image = match meta.image_path(path) {
-            Some(path) => Some(DynamicImage::load(pack, path)?),
+            Some(path) => Some(I::load(pack, path).map_err(SpriteError::Image)?),
             None => None,
         };
 

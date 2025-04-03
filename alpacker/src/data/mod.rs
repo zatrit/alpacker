@@ -26,3 +26,16 @@ impl Asset for String {
         Ok(buf)
     }
 }
+
+impl Asset for Vec<u8> {
+    type Error = Error;
+
+    fn load(pack: &mut impl Pack, path: impl AsRef<Path>) -> AssetResult<Self> {
+        let mut raw = pack.get_raw(path)?;
+
+        let size = raw.size_hint.unwrap_or(0);
+        let mut buf = Vec::with_capacity(size);
+        raw.read.read_to_end(&mut buf)?;
+        Ok(buf)
+    }
+}
