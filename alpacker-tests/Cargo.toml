@@ -8,8 +8,7 @@ publish = false
 alpacker = { workspace = true, features = [
   "tarzst",
   "image",
-  "raylib",
-  "nobuild",
+  "collect-errors",
 ] }
 alpacker-packer = { workspace = true }
 
