@@ -1,26 +1,6 @@
-use std::error::Error;
-
 use alpacker::{Assets, Pack, pack::TarZstPack};
-use rstest::{fixture, rstest};
-
-const SAMPLES_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/samples/");
-
-type TestResult = Result<(), Box<dyn Error>>;
-
-/// Fixture that loads assets from the test samples directory.
-/// This runs once before all tests due to the `#[once]` attribute.
-#[fixture]
-#[once]
-fn assets() -> Assets {
-    Assets::load_from_dir(SAMPLES_DIR).unwrap()
-}
-
-/// Fixture that loads the "test" asset pack from the available assets.
-/// Uses the `assets` fixture as a dependency.
-#[fixture]
-fn pack(assets: &Assets) -> TarZstPack {
-    assets.load_pack("test").unwrap()
-}
+use alpacker_tests::{TestResult, assets, pack};
+use rstest::rstest;
 
 /// Test that verifies the correct behavior of `load_pack()`.
 /// - Ensures an error is returned when trying to load a non-existent pack.

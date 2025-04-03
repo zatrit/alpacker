@@ -1,4 +1,4 @@
-use image::{DynamicImage, ImageError, ImageReader};
+use image::{DynamicImage, ImageError, ImageFormat};
 use std::{io::BufReader, path::Path};
 
 use crate::{Asset, AssetResult, Pack};
@@ -11,16 +11,21 @@ impl Asset for DynamicImage {
 
     /// Loads an image from the asset pack
     fn load(pack: &mut impl Pack, path: impl AsRef<Path>) -> AssetResult<Self> {
-        // Get raw byte stream from pack implementation
-        let raw = pack.get_raw(path)?; // Propagates pack's error
+        let raw = pack.get_raw(&path)?; // Propagates pack's error
 
-        // Create buffered reader for efficient byte access
         let buf_read = BufReader::new(raw.read);
+        let format = ImageFormat::from_path(&path)?;
 
-        // Decode image using image crate's auto-detection:
-        // - Determines format from content (PNG, JPEG, etc.)
-        // - Handles format-specific parsing
-        // - Converts to unified DynamicImage representation
-        ImageReader::new(buf_read).decode()
+        image::load(buf_read, format)
     }
 }
+
+/// A type alias for a sprite that uses `DynamicImage` as its image representation.
+///
+/// This alias is available only when the `aseprite` feature is enabled.
+/// It represents a sprite with metadata loaded from an Aseprite file
+/// and an associated image stored as a `DynamicImage`.
+///
+/// See [`Sprite`](super::aseprite::Sprite) for more details.
+#[cfg(feature = "aseprite")]
+pub type ImageSprite = super::aseprite::Sprite<DynamicImage>;

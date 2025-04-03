@@ -1,18 +1,17 @@
 [workspace]
 resolver = "2"
-members = ["alpacker", "alpacker-packer"]
+members = ["alpacker", "alpacker-packer", "alpacker-tests"]
 
 [workspace.dependencies]
 alpacker = { path = "./alpacker", default-features = false }
 alpacker-packer = { path = "./alpacker-packer", default-features = false }
+alpacker-tests = { path = "./alpacker-tests" }
 
 serde = { version = "1.0", features = ["derive"] }
 tar = "0.4"
 thiserror = "2.0"
 serde_json = "1.0"
 zstd = "0.13"
-
 image = { version = "0.25", default-features = false }
 
-testdir = "0.9"
 rstest = "0.25"

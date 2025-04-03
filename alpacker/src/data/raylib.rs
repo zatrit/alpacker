@@ -26,3 +26,14 @@ impl Asset for Image {
         Image::load_image_from_mem(&extension, &data).map_err(RaylibError::Raylib)
     }
 }
+
+/// A type alias for a sprite that uses `raylib::texture::Image` as its image representation.
+///
+/// This alias is available only when the `aseprite` feature is enabled.
+/// It represents a sprite with metadata loaded from an Aseprite file
+/// and an associated image stored as a `raylib::texture::Image`,
+/// which is compatible with Raylib's rendering system.
+///
+/// See [`Sprite`](super::aseprite::Sprite) for more details.
+#[cfg(feature = "aseprite")]
+pub type RaylibSprite = super::aseprite::Sprite<Image>;

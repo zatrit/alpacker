@@ -1,0 +1,17 @@
+[package]
+name = "alpacker-tests"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+alpacker = { workspace = true, features = [
+  "tarzst",
+  "image",
+  "raylib",
+  "nobuild",
+] }
+alpacker-packer = { workspace = true }
+
+image = { workspace = true, features = ["png"] }
+rstest = { workspace = true }

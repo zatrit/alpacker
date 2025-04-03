@@ -7,18 +7,21 @@ edition = "2024"
 serde = { workspace = true }
 thiserror = { workspace = true }
 serde_json = { workspace = true }
+
 zstd = { workspace = true, optional = true }
 tar = { workspace = true, optional = true }
 
-image = { optional = true, workspace = true }
+image = { workspace = true, optional = true }
 aseprite = { version = "0.1", optional = true }
 twox-hash = { version = "2.1", optional = true }
 raylib = { version = "5.5", optional = true, default-features = false }
 
 [dev-dependencies]
+alpacker-tests = { workspace = true }
 rstest = { workspace = true }
 
 [features]
-default = ["collect-errors", "tar", "zstd", "twox-hash"]
+default = ["collect-errors", "tarzst", "twox-hash"]
+tarzst = ["tar", "zstd"]
 nobuild = ["raylib?/nobuild"]
 collect-errors = []

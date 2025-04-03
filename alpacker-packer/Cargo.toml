@@ -7,20 +7,25 @@ edition = "2024"
 alpacker = { workspace = true, default-features = false }
 
 serde = { workspace = true }
-tar = { workspace = true }
 thiserror = { workspace = true }
 serde_json = { workspace = true }
-zstd = { workspace = true }
+
+zstd = { workspace = true, optional = true }
+tar = { workspace = true, optional = true }
 
 oxipng = { version = "9.1", optional = true, features = ["zopfli"] }
 glob = { version = "0.3", optional = true }
 
+[dev-dependencies]
+rstest = { workspace = true }
+alpacker-tests = { workspace = true }
+testdir = "0.9"
+
 [features]
-default = ["zstd", "tar", "oxipng"]
+default = ["tarzst", "oxipng"]
 
 oxipng = ["dep:oxipng", "glob"]
-zstd = ["alpacker/zstd"]
-tar = ["alpacker/tar"]
 
-[dev-dependencies]
-testdir = { workspace = true }
+zstd = ["alpacker/zstd", "dep:zstd"]
+tar = ["alpacker/tar", "dep:tar"]
+tarzst = ["tar", "zstd"]
