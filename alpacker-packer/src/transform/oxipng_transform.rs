@@ -20,6 +20,7 @@ pub enum OxipngError {
 }
 
 #[repr(transparent)]
+#[derive(Debug, Default, Clone)]
 pub struct OxipngTransform(pub oxipng::Options);
 
 impl Transform for OxipngTransform {
