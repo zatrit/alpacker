@@ -21,7 +21,8 @@ alpacker-tests = { workspace = true }
 rstest = { workspace = true }
 
 [features]
-default = ["collect-errors", "tarzst", "twox-hash"]
+default = ["collect-errors", "tarzst", "twox-hash", "fs"]
 tarzst = ["tar", "zstd"]
 nobuild = ["raylib?/nobuild"]
+fs = []
 collect-errors = []

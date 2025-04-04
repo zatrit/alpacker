@@ -9,6 +9,7 @@ alpacker = { workspace = true, features = [
   "tarzst",
   "image",
   "collect-errors",
+  "fs",
 ] }
 alpacker-packer = { workspace = true }
 
