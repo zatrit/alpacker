@@ -1,5 +1,7 @@
+mod common;
+use common::*;
+
 use alpacker::{Assets, Pack, pack::TarZstPack};
-use alpacker_tests::{TestResult, assets, pack};
 use rstest::rstest;
 
 /// Test that verifies the correct behavior of `load_pack()`.

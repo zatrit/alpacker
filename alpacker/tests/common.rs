@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use std::error::Error;
 
 use alpacker::{Assets, pack::TarZstPack};
@@ -5,8 +7,7 @@ use rstest::fixture;
 
 pub type TestResult = Result<(), Box<dyn Error>>;
 
-pub const SAMPLES_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/samples/");
-pub const ASSETS_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/assets/");
+pub const SAMPLES_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/samples/");
 
 pub const IMAGE: &str = "cat.png";
 

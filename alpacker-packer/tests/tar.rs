@@ -1,8 +1,10 @@
+mod common;
+use common::*;
+
 use testdir::testdir;
 
 use alpacker::{Assets, MANIFEST_FILE, Pack, pack::TarZstPack};
 use alpacker_packer::{AssetsBuilder, PackBuilder};
-use alpacker_tests::{ASSETS_DIR, TestResult};
 
 #[test]
 fn test_tar_zstd_pack() -> TestResult {

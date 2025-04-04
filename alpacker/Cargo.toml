@@ -17,8 +17,8 @@ twox-hash = { version = "2.1", optional = true }
 raylib = { version = "5.5", optional = true, default-features = false }
 
 [dev-dependencies]
-alpacker-tests = { workspace = true }
 rstest = { workspace = true }
+image = { workspace = true, features = ["png"] }
 
 [features]
 default = ["collect-errors", "tarzst", "twox-hash", "fs"]
@@ -26,3 +26,15 @@ tarzst = ["tar", "zstd"]
 nobuild = ["raylib?/nobuild"]
 fs = []
 collect-errors = []
+
+[[test]]
+name = "common"
+required-features = ["tarzst", "fs"]
+
+[[test]]
+name = "image"
+required-features = ["tarzst", "fs", "image"]
+
+[[test]]
+name = "tar"
+required-features = ["tarzst", "fs"]

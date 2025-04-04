@@ -1,4 +1,6 @@
-use alpacker_tests::{ASSETS_DIR, IMAGE, TestResult};
+mod common;
+use common::*;
+
 use alpacker_packer::{PackBuilder, transform::OxipngTransform};
 use std::{fs, path::Path};
 

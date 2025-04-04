@@ -1,5 +1,7 @@
+mod common;
+use common::*;
+
 use alpacker::{Pack, pack::TarZstPack};
-use alpacker_tests::{pack, TestResult, IMAGE};
 
 use image::DynamicImage;
 use rstest::rstest;

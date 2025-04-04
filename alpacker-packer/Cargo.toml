@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-alpacker = { workspace = true, default-features = false }
+alpacker = { workspace = true, default-features = false, features = ["fs"] }
 
 serde = { workspace = true }
 thiserror = { workspace = true }
@@ -17,8 +17,6 @@ oxipng = { version = "9.1", optional = true, features = ["zopfli"] }
 glob = { version = "0.3", optional = true }
 
 [dev-dependencies]
-rstest = { workspace = true }
-alpacker-tests = { workspace = true }
 testdir = "0.9"
 
 [features]
@@ -29,3 +27,11 @@ oxipng = ["dep:oxipng", "glob"]
 zstd = ["alpacker/zstd", "dep:zstd"]
 tar = ["alpacker/tar", "dep:tar"]
 tarzst = ["tar", "zstd"]
+
+[[test]]
+name = "oxipng"
+required-features = ["oxipng"]
+
+[[test]]
+name = "tar"
+required-features = ["tarzst"]

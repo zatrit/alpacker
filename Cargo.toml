@@ -1,11 +1,10 @@
 [workspace]
 resolver = "2"
-members = ["alpacker", "alpacker-packer", "alpacker-tests"]
+members = ["alpacker", "alpacker-packer"]
 
 [workspace.dependencies]
 alpacker = { path = "./alpacker", default-features = false }
 alpacker-packer = { path = "./alpacker-packer", default-features = false }
-alpacker-tests = { path = "./alpacker-tests" }
 
 serde = { version = "1.0", features = ["derive"] }
 tar = "0.4"
