@@ -53,12 +53,14 @@ pub trait RaylibAsset<'r>: Sized {
     /// The raylib system type required for asset loading (e.g., `RaylibAudio` for `Wave`).
     type System;
 
+    type Error;
+
     /// Loads an asset from a pack using the provided raylib system.
     fn load(
         pack: &mut impl Pack,
         system: &'r mut Self::System,
         path: impl AsRef<Path>,
-    ) -> Result<Self, RaylibError>;
+    ) -> Result<Self, Self::Error>;
 }
 
 /// Extension trait for `Pack` to provide convenient loading of raylib assets.
@@ -68,7 +70,7 @@ pub trait PackRaylibExt<'r>: Pack {
         &mut self,
         raylib: &'r mut A::System,
         path: impl AsRef<Path>,
-    ) -> Result<A, RaylibError> {
+    ) -> Result<A, A::Error> {
         A::load(self, raylib, path)
     }
 }
@@ -83,12 +85,13 @@ impl<P: Pack> PackRaylibExt<'_> for P {}
 /// - Loads the `Wave` into memory using raylib.
 impl<'r> RaylibAsset<'r> for Wave<'r> {
     type System = RaylibAudio;
+    type Error = RaylibError;
 
     fn load(
         pack: &mut impl Pack,
         system: &'r mut Self::System,
         path: impl AsRef<Path>,
-    ) -> Result<Self, RaylibError> {
+    ) -> Result<Self, Self::Error> {
         let data = pack.get::<Vec<u8>>(&path)?;
         let ext = file_type(path.as_ref(), "wav");
 
