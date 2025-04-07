@@ -1,5 +1,5 @@
 use raylib::{
-    audio::{RaylibAudio, Wave},
+    audio::{Music, RaylibAudio, Wave},
     texture::Image,
 };
 use std::{ffi::OsStr, io, path::Path};
@@ -97,6 +97,24 @@ impl<'r> RaylibAsset<'r> for Wave<'r> {
 
         system
             .new_wave_from_memory(&ext, &data)
+            .map_err(RaylibError::Raylib)
+    }
+}
+
+impl<'r> RaylibAsset<'r> for Music<'r> {
+    type System = RaylibAudio;
+    type Error = RaylibError;
+
+    fn load(
+        pack: &mut impl Pack,
+        system: &'r mut Self::System,
+        path: impl AsRef<Path>,
+    ) -> Result<Self, Self::Error> {
+        let data = pack.get::<Vec<u8>>(&path)?;
+        let ext = file_type(path.as_ref(), "wav");
+
+        system
+            .new_music_from_memory(&ext, &data)
             .map_err(RaylibError::Raylib)
     }
 }
