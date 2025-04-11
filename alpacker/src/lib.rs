@@ -34,9 +34,9 @@ pub enum JsonIoError {
 }
 
 /// Represents a raw file inside an asset pack.
-pub struct Raw<R: io::Read + io::Seek> {
+pub struct Raw<'p, R: io::Read + io::Seek> {
     pub size_hint: Option<usize>,
-    pub path: PathBuf,
+    pub path: &'p Path,
     pub read: R,
 }
 
@@ -76,7 +76,7 @@ pub trait Pack: Sized {
     /// # Returns
     /// * `Ok(Raw<impl Read + Seek>)` if the file is found.
     /// * `Err(io::Error)` if the file is missing.
-    fn get_raw(&mut self, path: impl AsRef<Path>) -> io::Result<Raw<impl io::Read + io::Seek>>;
+    fn get_raw<'p>(&mut self, path: &'p Path) -> io::Result<Raw<'p, impl io::Read + io::Seek>>;
 
     /// Retrieves and constructs a typed asset.
     ///

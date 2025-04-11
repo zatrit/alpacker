@@ -11,7 +11,7 @@ impl Asset for DynamicImage {
 
     /// Loads an image from the asset pack
     fn load(pack: &mut impl Pack, path: impl AsRef<Path>) -> AssetResult<Self> {
-        let raw = pack.get_raw(&path)?; // Propagates pack's error
+        let raw = pack.get_raw(&path.as_ref())?; // Propagates pack's error
 
         let buf_read = BufReader::new(raw.read);
         let format = ImageFormat::from_path(&path)?;

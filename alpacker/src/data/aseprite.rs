@@ -21,7 +21,7 @@ impl Asset for SpritesheetData {
     type Error = JsonIoError;
 
     fn load(pack: &mut impl Pack, path: impl AsRef<Path>) -> AssetResult<Self> {
-        let raw = pack.get_raw(path)?;
+        let raw = pack.get_raw(path.as_ref())?;
         serde_json::from_reader(raw.read).map_err(JsonIoError::Json)
     }
 }

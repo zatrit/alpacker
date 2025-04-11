@@ -36,12 +36,10 @@ impl TarPack {
 }
 
 impl<S: BuildHasher + Default> Pack for TarPack<S> {
-    fn get_raw(&mut self, path: impl AsRef<Path>) -> io::Result<Raw<impl Read + Seek>> {
-        let path = path.as_ref();
-
+    fn get_raw<'p>(&mut self, path: &'p Path) -> io::Result<Raw<'p, impl Read + Seek>> {
         match self.contents.get(path) {
             Some(raw) => Ok(Raw {
-                path: path.to_path_buf(),
+                path,
                 size_hint: Some(raw.len()), // Provide an estimated file size
                 read: io::Cursor::new(raw), // Wrap the file contents in an in-memory reader
             }),

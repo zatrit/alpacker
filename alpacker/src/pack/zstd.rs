@@ -18,7 +18,7 @@ impl<P: Pack> Pack for Zstd<P> {
     }
 
     #[inline]
-    fn get_raw(&mut self, path: impl AsRef<Path>) -> io::Result<Raw<impl Read + Seek>> {
+    fn get_raw<'p>(&mut self, path: &'p Path) -> io::Result<Raw<'p, impl Read + Seek>> {
         self.0.get_raw(path) // Delegate the call to the inner `Pack` implementation.
     }
 

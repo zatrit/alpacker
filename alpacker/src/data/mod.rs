@@ -18,7 +18,7 @@ impl Asset for String {
     type Error = Error;
 
     fn load(pack: &mut impl Pack, path: impl AsRef<Path>) -> AssetResult<Self> {
-        let mut raw = pack.get_raw(path)?;
+        let mut raw = pack.get_raw(path.as_ref())?;
 
         let size = raw.size_hint.unwrap_or(0);
         let mut buf = String::with_capacity(size);
@@ -31,7 +31,7 @@ impl Asset for Vec<u8> {
     type Error = Error;
 
     fn load(pack: &mut impl Pack, path: impl AsRef<Path>) -> AssetResult<Self> {
-        let mut raw = pack.get_raw(path)?;
+        let mut raw = pack.get_raw(path.as_ref())?;
 
         let size = raw.size_hint.unwrap_or(0);
         let mut buf = Vec::with_capacity(size);
