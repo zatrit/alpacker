@@ -49,7 +49,7 @@ impl MakePack for TarPack {
         tar.finish()
     }
 
-    fn suffix() -> Cow<'static, str> {
+    fn extension() -> Cow<'static, str> {
         Cow::Borrowed(".tar")
     }
 }

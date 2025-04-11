@@ -20,7 +20,7 @@ impl<P: MakePack> MakePack for Zstd<P> {
         P::make(root, zstd)
     }
 
-    fn suffix() -> Cow<'static, str> {
-        Cow::Owned(format!("{}.zst", P::suffix()))
+    fn extension() -> Cow<'static, str> {
+        Cow::Owned(format!("{}.zst", P::extension()))
     }
 }

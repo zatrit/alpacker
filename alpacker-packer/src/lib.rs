@@ -24,8 +24,8 @@ pub trait MakePack: Pack {
     /// Creates a package from the specified directory and writes it to `write`.
     fn make(root: impl AsRef<Path>, write: impl io::Write) -> io::Result<()>;
 
-    /// Returns the file extension (suffix) for the package type.
-    fn suffix() -> Cow<'static, str>;
+    /// Returns the file extension for the package type.
+    fn extension() -> Cow<'static, str>;
 }
 
 /// Trait for applying transformations to files in a directory.
@@ -39,10 +39,10 @@ pub trait Transform {
 /// A utility for building package directories before creating a pack.
 pub struct PackBuilder {
     /// Temporary directory for building the package
-    temp_dir: PathBuf,
+    work_dir: PathBuf,
 
-    /// Whether to remove the directory on drop
-    remove_dir: bool,
+    /// Whether to remove the working directory on drop
+    cleanup_on_drop: bool,
 }
 
 // https://stackoverflow.com/a/65192210
@@ -80,39 +80,39 @@ impl PackBuilder {
 
     /// Creates a `PackBuilder` with a specified temporary directory.
     /// The `remove_dir` flag determines whether the directory should be deleted on drop.
-    pub fn with_temp_dir(dir: impl Into<PathBuf>, remove_dir: bool) -> Self {
+    pub fn with_temp_dir(dir: impl Into<PathBuf>, cleanup_on_drop: bool) -> Self {
         Self {
-            temp_dir: dir.into(),
-            remove_dir,
+            work_dir: dir.into(),
+            cleanup_on_drop,
         }
     }
 
     #[inline]
     pub fn transform<T: Transform>(self, transformer: &mut T) -> Result<Self, T::Error> {
-        transformer.transform(&self.temp_dir)?;
+        transformer.transform(&self.work_dir)?;
         Ok(self)
     }
 
     /// Copies files from the source directory into the package directory.
     #[inline]
     pub fn copy_from(self, src: impl AsRef<Path>) -> io::Result<Self> {
-        copy_dir_all(src, &self.temp_dir)?;
+        copy_dir_all(src, &self.work_dir)?;
         Ok(self)
     }
 
     #[inline]
-    pub fn make_pack<P: MakePack>(&self, write: impl io::Write) -> io::Result<()> {
-        P::make(&self.temp_dir, write)
+    pub fn write_pack<P: MakePack>(&self, write: impl io::Write) -> io::Result<()> {
+        P::make(&self.work_dir, write)
     }
 
     pub fn insert_file(&mut self, path: impl AsRef<Path>, content: &[u8]) -> io::Result<()> {
-        let file_path = self.temp_dir.join(path);
+        let file_path = self.work_dir.join(path);
         fs::write(file_path, content)?;
         Ok(())
     }
 
-    pub const fn temp_dir(&self) -> &PathBuf {
-        &self.temp_dir
+    pub const fn work_dir(&self) -> &PathBuf {
+        &self.work_dir
     }
 }
 
@@ -120,8 +120,8 @@ impl Drop for PackBuilder {
     /// Removes the temporary directory when the `PackBuilder` is dropped,
     /// if the `remove_dir` flag is set to `true`.
     fn drop(&mut self) {
-        if self.remove_dir {
-            if let Err(err) = fs::remove_dir_all(&self.temp_dir) {
+        if self.cleanup_on_drop {
+            if let Err(err) = fs::remove_dir_all(&self.work_dir) {
                 eprintln!("Warning: Failed to remove temp dir: {err}");
             }
         }
@@ -156,11 +156,11 @@ impl AssetsBuilder {
     /// Adds a package to the builder, creates the package file, and updates the manifest.
     pub fn add_pack<P: MakePack>(mut self, name: &str, pack: &PackBuilder) -> io::Result<Self> {
         let mut file_name = name.to_string();
-        file_name.push_str(&P::suffix());
+        file_name.push_str(&P::extension());
         let path = self.root.join(&self.packs_dir).join(&file_name);
 
         let mut file = File::create_new(&path)?;
-        pack.make_pack::<P>(&mut file)?;
+        pack.write_pack::<P>(&mut file)?;
 
         let meta = PackMeta(PathBuf::from(file_name));
         self.packs.insert(name.to_string(), meta);

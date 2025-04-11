@@ -14,7 +14,7 @@ fn test_oxipng_optimization() -> TestResult {
         .transform(&mut oxipng)?;
 
     let old_size = fs::metadata(Path::new(ASSETS_DIR).join(IMAGE))?.len();
-    let new_size = fs::metadata(pack.temp_dir().join(IMAGE))?.len();
+    let new_size = fs::metadata(pack.work_dir().join(IMAGE))?.len();
 
     assert!(
         new_size < old_size,
