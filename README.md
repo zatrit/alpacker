@@ -88,9 +88,9 @@ use alpacker::data::raylib::{PackRaylibExt, RaylibAsset};
 use raylib::audio::RaylibAudio;
 
 let mut audio = RaylibAudio::init_audio_device();
-let music = pack.get::<raylib::audio::Music>(&mut audio, "music/title.ogg").unwrap();
+let music = pack.get_raylib::<raylib::audio::Music>(&mut audio, "music/title.ogg").unwrap();
 ```
 
 ## License
 
-Licensed under the [Apache License, Version 2.0](LICENSE) (Apache-2.0).
+Licensed under the [Apache License, Version 2.0](LICENSE.txt) (Apache-2.0).

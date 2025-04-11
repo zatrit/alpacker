@@ -66,7 +66,7 @@ pub trait RaylibAsset<'r>: Sized {
 /// Extension trait for `Pack` to provide convenient loading of raylib assets.
 pub trait PackRaylibExt<'r>: Pack {
     /// Retrieves a raylib asset from the pack, using the necessary raylib system.
-    fn get<A: RaylibAsset<'r>>(
+    fn get_raylib<A: RaylibAsset<'r>>(
         &mut self,
         raylib: &'r mut A::System,
         path: impl AsRef<Path>,
