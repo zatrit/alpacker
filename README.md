@@ -21,13 +21,15 @@ use alpacker::pack::TarPack;
 use alpacker_packer::{PackBuilder, MakePack};
 use std::fs::File;
 
-let builder = PackBuilder::new("assets")
+// Creates a temporary workspace for packaging.
+// "builder" works in a temporary directory, original files are untouched.
+let builder = PackBuilder::new()
     .unwrap()
-    .copy_from("assets_dir")
+    .copy_from("./assets")
     .unwrap();
 
-let file = File::create("assets.tar").unwrap();
-builder.make_pack::<TarPack>(file).unwrap();
+let file = File::create("./assets.tar").unwrap();
+builder.write_pack::<TarPack>(file).unwrap();
 ```
 
 ### Applying transformations (e.g. better PNG compression)
@@ -35,6 +37,7 @@ builder.make_pack::<TarPack>(file).unwrap();
 ```rust
 use alpacker_packer::transform::OxipngTransform;
 
+// Create the builder first, before applying transforms.
 let mut transformer = OxipngTransform::default();
 let builder = builder.transform(&mut transformer).unwrap();
 ```
@@ -42,10 +45,11 @@ let builder = builder.transform(&mut transformer).unwrap();
 ### Building a compressed `.tar.zst` package
 
 ```rust
-use alpacker::pack::{TarPack, Zstd};
+use alpacker::pack::TarZstPack;
 
+// Create the builder first, before writing pack.
 let file = File::create("assets.tar.zst").unwrap();
-builder.make_pack::<Zstd<TarPack>>(file).unwrap();
+builder.write_pack::<TarZstPack>(file).unwrap();
 ```
 
 ### Creating a manifest
@@ -53,11 +57,13 @@ builder.make_pack::<Zstd<TarPack>>(file).unwrap();
 ```rust
 use alpacker_packer::AssetsBuilder;
 
-let manifest = AssetsBuilder::new("build", "packs")
+// Creates an asset directory called "build" in the working directory.
+// It also creates a "packs" directory, which will contain packs.
+let manifest = AssetsBuilder::new("./build", "packs")
     .unwrap()
-    .add_pack::<TarPack>("main", &builder)
+    .add_pack::<TarPack>("main", &builder) // Creates the package "main.tar" in the "./build/packs/" directory.
     .unwrap()
-    .write_manifest()
+    .write_manifest() // Writes manifest to "./build/manifest.json"
     .unwrap();
 ```
 
@@ -66,7 +72,7 @@ let manifest = AssetsBuilder::new("build", "packs")
 ```rust
 use alpacker::{Assets, Asset, pack::TarPack};
 
-let assets = Assets::load_from_dir("build").unwrap();
+let assets = Assets::load_from_dir("./assets").unwrap();
 let mut pack = assets.load_pack::<TarPack>("main").unwrap();
 
 let text: String = pack.get("file.txt").unwrap();

@@ -68,12 +68,12 @@ fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> io::Result<()> 
 
 impl PackBuilder {
     /// Creates a new `PackBuilder` with a unique temporary directory.
-    pub fn new(name: &str) -> io::Result<PackBuilder> {
+    pub fn new() -> io::Result<PackBuilder> {
         let time = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        let temp = env::temp_dir().join(format!("{}-pack-{}", name, time));
+        let temp = env::temp_dir().join(format!("pack-tmp-{time}"));
         fs::create_dir(&temp)?;
         Ok(Self::with_temp_dir(temp, false))
     }

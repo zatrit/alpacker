@@ -68,10 +68,10 @@ pub trait PackRaylibExt<'r>: Pack {
     /// Retrieves a raylib asset from the pack, using the necessary raylib system.
     fn get_raylib<A: RaylibAsset<'r>>(
         &mut self,
-        raylib: &'r mut A::System,
+        system: &'r mut A::System,
         path: impl AsRef<Path>,
     ) -> Result<A, A::Error> {
-        A::load(self, raylib, path)
+        A::load(self, system, path)
     }
 }
 

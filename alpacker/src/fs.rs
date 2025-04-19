@@ -11,7 +11,7 @@ use thiserror::Error;
 use crate::{JsonIoError, Pack};
 
 /// The name of the manifest file that stores metadata about available asset packs.
-pub const MANIFEST_FILE: &'static str = "manifest.json";
+pub const MANIFEST_FILE: &str = "manifest.json";
 
 #[derive(Debug, Error)]
 pub enum PackLoadError {

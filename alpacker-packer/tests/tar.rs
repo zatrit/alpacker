@@ -11,7 +11,7 @@ fn test_tar_zstd_pack() -> TestResult {
     // Prepare test environment
     let test_dir = testdir!();
 
-    let pack = PackBuilder::new("test")?.copy_from(ASSETS_DIR)?;
+    let pack = PackBuilder::new()?.copy_from(ASSETS_DIR)?;
 
     AssetsBuilder::new(&test_dir, "./")?
         .add_pack::<TarZstPack>("test", &pack)?

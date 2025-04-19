@@ -9,7 +9,7 @@ fn test_oxipng_optimization() -> TestResult {
     // Write manifest and packs
     let mut oxipng = OxipngTransform(oxipng::Options::max_compression());
 
-    let pack = PackBuilder::new("test")?
+    let pack = PackBuilder::new()?
         .copy_from(ASSETS_DIR)?
         .transform(&mut oxipng)?;
 
