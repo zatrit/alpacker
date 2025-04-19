@@ -3,8 +3,8 @@ use common::*;
 
 use testdir::testdir;
 
-use alpacker::{Assets, MANIFEST_FILE, Pack, pack::TarZstPack};
-use alpacker_packer::{AssetsBuilder, PackBuilder};
+use alpacker::{Assets, MANIFEST_FILE, Pack};
+use alpacker_packer::{AssetsBuilder, PackBuilder, TarZstPack};
 
 #[test]
 fn test_tar_zstd_pack() -> TestResult {

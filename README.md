@@ -17,8 +17,7 @@ Some comments *(not the code)* are written with [DeepSeek](https://deepseek.com)
 ### Building a TAR package
 
 ```rust
-use alpacker::pack::TarPack;
-use alpacker_packer::{PackBuilder, MakePack};
+use alpacker_packer::{PackBuilder, MakePack, TarPack};
 use std::fs::File;
 
 // Creates a temporary workspace for packaging.
@@ -45,7 +44,7 @@ let builder = builder.transform(&mut transformer).unwrap();
 ### Building a compressed `.tar.zst` package
 
 ```rust
-use alpacker::pack::TarZstPack;
+use alpacker_packer::TarZstPack;
 
 // Create the builder first, before writing pack.
 let file = File::create("assets.tar.zst").unwrap();
@@ -55,7 +54,7 @@ builder.write_pack::<TarZstPack>(file).unwrap();
 ### Creating a manifest
 
 ```rust
-use alpacker_packer::AssetsBuilder;
+use alpacker_packer::{AssetsBuilder, TarPack};
 
 // Creates an asset directory called "build" in the working directory.
 // It also creates a "packs" directory, which will contain packs.

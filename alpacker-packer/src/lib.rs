@@ -16,6 +16,8 @@ use std::{
     path::{Path, PathBuf},
     time::{SystemTime, UNIX_EPOCH},
 };
+#[allow(unused)]
+pub use alpacker::pack::*;
 
 /// Trait for creating a package from a directory.
 /// Implementing types must define how the package is created (`make`)
