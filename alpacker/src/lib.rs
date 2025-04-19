@@ -6,10 +6,7 @@ mod fs;
 #[cfg(feature = "fs")]
 pub use fs::*;
 
-use std::{
-    hash, io,
-    path::{Path, PathBuf},
-};
+use std::{hash, io, path::Path};
 use thiserror::Error;
 
 // Defines the default hasher to use for hash maps.
@@ -92,5 +89,5 @@ pub trait Pack: Sized {
         A::load(self, path)
     }
 
-    fn exists(&self, path: impl AsRef<PathBuf>) -> bool;
+    fn exists(&self, path: impl AsRef<Path>) -> bool;
 }

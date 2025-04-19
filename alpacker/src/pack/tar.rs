@@ -90,7 +90,7 @@ impl<S: BuildHasher + Default> Pack for TarPack<S> {
         Ok(Self { contents, skipped })
     }
 
-    fn exists(&self, path: impl AsRef<PathBuf>) -> bool {
+    fn exists(&self, path: impl AsRef<Path>) -> bool {
         self.contents.contains_key(path.as_ref())
     }
 }

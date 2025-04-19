@@ -1,7 +1,7 @@
 use std::{
     io::{self, Read, Seek},
     ops::Deref,
-    path::{Path, PathBuf},
+    path::Path,
 };
 
 use crate::{Pack, Raw};
@@ -23,7 +23,7 @@ impl<P: Pack> Pack for Zstd<P> {
     }
 
     #[inline]
-    fn exists(&self, path: impl AsRef<PathBuf>) -> bool {
+    fn exists(&self, path: impl AsRef<Path>) -> bool {
         self.0.exists(path)
     }
 }
