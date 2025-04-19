@@ -14,12 +14,12 @@ use crate::{JsonIoError, Pack};
 pub const MANIFEST_FILE: &str = "manifest.json";
 
 #[derive(Debug, Error)]
-pub enum PackLoadError {
+pub enum PackLoadError<'a> {
     #[error("I/O error: {0}")]
     Io(#[from] io::Error),
 
     #[error("No pack \"{0}\" found")]
-    NoSuchPack(&'static str),
+    NoSuchPack(&'a str),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -74,7 +74,7 @@ impl Assets {
     /// # Returns
     /// * `Ok(P)` if the pack is successfully loaded.
     /// * `Err(PackLoadError)` if the pack is missing or fails to load.
-    pub fn load_pack<P: Pack>(&self, name: &'static str) -> Result<P, PackLoadError> {
+    pub fn load_pack<'a, P: Pack>(&self, name: &'a str) -> Result<P, PackLoadError<'a>> {
         let Some(meta) = self.packs.get(name) else {
             return Err(PackLoadError::NoSuchPack(name));
         };
