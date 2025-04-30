@@ -7,10 +7,12 @@ alpacker = { path = "./alpacker", default-features = false }
 alpacker-packer = { path = "./alpacker-packer", default-features = false }
 
 serde = { version = "1.0", features = ["derive"] }
-tar = "0.4"
 thiserror = "2.0"
 serde_json = "1.0"
-zstd = "0.13"
 image = { version = "0.25", default-features = false }
+
+zstd = "0.13"
+bzip2 = "0.5"
+tar = "0.4"
 
 rstest = "0.25"

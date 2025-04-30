@@ -23,6 +23,14 @@ fn test_load_pack(assets: &Assets) -> TestResult {
     Ok(())
 }
 
+#[rstest]
+fn test_invalid_pack(assets: &Assets) {
+    assert!(
+        assets.load_pack::<TarZstPack>("invalid").is_err(),
+        "Expected error when loading an invalid pack"
+    )
+}
+
 /// Test that verifies the correct behavior of `get()` for retrieving string assets.
 /// - Ensures an error is returned when trying to retrieve a non-existent file.
 /// - Checks that the content of `myfile.txt` matches the expected string.

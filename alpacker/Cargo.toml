@@ -9,6 +9,7 @@ thiserror = { workspace = true }
 serde_json = { workspace = true }
 
 zstd = { workspace = true, optional = true }
+bzip2 = { workspace = true, optional = true }
 tar = { workspace = true, optional = true }
 
 image = { workspace = true, optional = true }
@@ -22,10 +23,11 @@ image = { workspace = true, features = ["png"] }
 
 [features]
 default = ["collect-errors", "tarzst", "twox-hash", "fs"]
-tarzst = ["tar", "zstd"]
 nobuild = ["raylib?/nobuild"]
 fs = []
 collect-errors = []
+tarzst = ["tar", "zstd"]
+tarbz2 = ["tar", "bzip2"]
 
 [[test]]
 name = "common"

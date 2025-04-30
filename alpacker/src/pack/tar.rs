@@ -23,9 +23,6 @@ pub struct TarPack<S = DefaultHasher> {
 pub enum Skipped {
     /// The path does not point to a valid file (e.g., it could be a directory).
     NotAFile(PathBuf),
-
-    /// An error occurred while reading the file.
-    Error(io::Error),
 }
 
 impl TarPack {
@@ -61,15 +58,7 @@ impl<S: BuildHasher + Default> Pack for TarPack<S> {
 
         // Iterate over each entry in the TAR archive.
         for entry in tar.entries()? {
-            let entry = match entry {
-                Ok(entry) => entry,
-                #[allow(unused_variables)]
-                Err(err) => {
-                    #[cfg(feature = "collect-errors")]
-                    skipped.push(Skipped::Error(err));
-                    continue;
-                }
-            };
+            let entry = entry?;
 
             let header = entry.header();
             let path = header.path()?.to_path_buf();

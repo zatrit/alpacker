@@ -1,11 +1,8 @@
-#[cfg(feature = "tar")]
-pub mod tar;
-
-#[cfg(feature = "zstd")]
-pub mod zstd;
-
 pub mod transform;
+pub mod pack;
 
+#[allow(unused)]
+pub use alpacker::pack::*;
 use alpacker::{Assets, JsonIoError, MANIFEST_FILE, Pack, PackMeta};
 use std::{
     borrow::Cow,
@@ -16,8 +13,6 @@ use std::{
     path::{Path, PathBuf},
     time::{SystemTime, UNIX_EPOCH},
 };
-#[allow(unused)]
-pub use alpacker::pack::*;
 
 /// Trait for creating a package from a directory.
 /// Implementing types must define how the package is created (`make`)

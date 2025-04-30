@@ -1,6 +1,7 @@
 {
   "packs_dir": "./",
   "packs": {
-    "test": "test.tar.zst"
+    "test": "test.tar.zst",
+    "invalid": "invalid.tar.zst"
   }
 }
