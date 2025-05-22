@@ -1,4 +1,9 @@
-use std::{io, marker::PhantomData, ops::Deref, path::Path};
+use std::{
+    io,
+    marker::PhantomData,
+    ops::{Deref, DerefMut},
+    path::Path,
+};
 
 use crate::{Pack, Raw};
 
@@ -19,7 +24,7 @@ pub trait Decode {
 /// - `P`: The base pack implementation (e.g. `TarPack`)
 /// - `C`: A codec that implements [`Decode`]
 pub struct EncodedPack<P: Pack, C> {
-    pack: P,
+    pub pack: P,
     _d: PhantomData<C>,
 }
 
@@ -48,5 +53,11 @@ impl<P: Pack, C> Deref for EncodedPack<P, C> {
     #[inline(always)]
     fn deref(&self) -> &Self::Target {
         &self.pack
+    }
+}
+
+impl<P: Pack, C> DerefMut for EncodedPack<P, C> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.pack
     }
 }

@@ -10,6 +10,7 @@ serde_json = { workspace = true }
 
 zstd = { workspace = true, optional = true }
 bzip2 = { workspace = true, optional = true }
+lz4_flex = { workspace = true, optional = true }
 tar = { workspace = true, optional = true }
 
 image = { workspace = true, optional = true }
@@ -26,8 +27,11 @@ default = ["collect-errors", "tarzst", "twox-hash", "fs"]
 nobuild = ["raylib?/nobuild"]
 fs = []
 collect-errors = []
+
+lz4 = ["dep:lz4_flex"]
 tarzst = ["tar", "zstd"]
 tarbz2 = ["tar", "bzip2"]
+tarlz4 = ["tar", "lz4"]
 
 [[test]]
 name = "common"
