@@ -1,6 +1,6 @@
 pub mod codec;
 
-macro_rules! pack_fmt {
+macro_rules! pack_type {
     ($ft: literal, $mod: ident, $use:ident) => {
         #[cfg(feature = $ft)]
         pub mod $mod;
@@ -9,18 +9,21 @@ macro_rules! pack_fmt {
     };
 }
 
-pack_fmt!("tar", tar, TarPack);
-pack_fmt!("zstd", zstd, Zstd);
-pack_fmt!("bzip2", bzip2, Bzip2);
+macro_rules! pack_alchemy {
+    ($($($feature:literal),* => $alias:ident = $type:ty [$doc:literal];)*) => {
+        $(#[doc = $doc]
+        #[cfg(all($(feature = $feature),*))]
+        pub type $alias = $type;)*
+    };
+}
 
-/// Type alias for a TAR archive compressed with Zstandard.
-///
-/// Equivalent to: `EncodedPack<TarPack, ZstdCodec>`
-#[cfg(all(feature = "tar", feature = "zstd"))]
-pub type TarZstPack = Zstd<TarPack>;
+pack_type!("tar", tar, TarPack);
+pack_type!("zstd", zstd, Zstd);
+pack_type!("bzip2", bzip2, Bzip2);
+pack_type!("lz4", lz4, Lz4);
 
-/// Type alias for a TAR archive compressed with Bzip2.
-///
-/// Equivalent to: `EncodedPack<TarPack, Bzip2Codec>`
-#[cfg(all(feature = "tar", feature = "bzip2"))]
-pub type TarBz2Pack = Bzip2<TarPack>;
+pack_alchemy!(
+    "tar", "zstd" => TarZstPack = Zstd<TarPack> ["Zstandard compressed TAR pack"];
+    "tar", "bzip2" => TarBz2Pack = Bzip2<TarPack> ["Bzip2 compressed TAR pack"];
+    "tar", "lz4" => TarLz4Pack = Lz4<TarPack> ["LZ4 compressed TAR pack"];
+);

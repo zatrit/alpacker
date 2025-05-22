@@ -13,6 +13,7 @@ image = { version = "0.25", default-features = false }
 
 zstd = "0.13"
 bzip2 = "0.5"
+lz4_flex = { version = "0.11", default-features = false, features = ["frame"] }
 tar = "0.4"
 
 rstest = "0.25"
