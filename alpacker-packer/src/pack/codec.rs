@@ -4,7 +4,7 @@ use std::{
     path::Path,
 };
 
-use alpacker::pack::codec::{Decode, EncodedPack};
+use alpacker::pack::codec::EncodedPack;
 
 use crate::MakePack;
 
@@ -20,7 +20,7 @@ pub trait Encode {
     fn extension() -> Cow<'static, str>;
 }
 
-impl<P: MakePack, C: Encode + Decode> MakePack for EncodedPack<P, C> {
+impl<P: MakePack, C: Encode> MakePack for EncodedPack<P, C> {
     fn make(root: impl AsRef<Path>, write: impl Write) -> io::Result<()> {
         P::make(root, C::encode(write)?)
     }

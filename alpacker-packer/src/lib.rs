@@ -3,7 +3,7 @@ pub mod pack;
 
 #[allow(unused)]
 pub use alpacker::pack::*;
-use alpacker::{Assets, JsonIoError, MANIFEST_FILE, Pack, PackMeta};
+use alpacker::{Assets, JsonIoError, MANIFEST_FILE, PackMeta};
 use std::{
     borrow::Cow,
     collections::HashMap,
@@ -17,7 +17,7 @@ use std::{
 /// Trait for creating a package from a directory.
 /// Implementing types must define how the package is created (`make`)
 /// and provide a file suffix (`suffix`).
-pub trait MakePack: Pack {
+pub trait MakePack {
     /// Creates a package from the specified directory and writes it to `write`.
     fn make(root: impl AsRef<Path>, write: impl io::Write) -> io::Result<()>;
 
