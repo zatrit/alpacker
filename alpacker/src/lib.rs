@@ -5,6 +5,7 @@ pub mod pack;
 mod fs;
 #[cfg(feature = "fs")]
 pub use fs::*;
+use serde::{Deserialize, Serialize};
 
 use std::{hash, io, path::Path};
 use thiserror::Error;
@@ -28,6 +29,12 @@ pub enum JsonIoError {
 
     #[error("Deserializer error: {0}")]
     Json(#[from] serde_json::Error),
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct PackManifest {
+    pub entry_count: usize,
+    pub file_count: usize,
 }
 
 /// Represents a raw file inside an asset pack.

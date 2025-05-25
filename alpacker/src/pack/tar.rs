@@ -5,7 +5,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::{DefaultHasher, Pack, Raw};
+use crate::{DefaultHasher, MANIFEST_FILE, Pack, PackManifest, Raw};
 
 /// TAR archive implementation of the Pack trait
 #[derive(Debug)]
@@ -62,6 +62,14 @@ impl<S: BuildHasher + Default> Pack for TarPack<S> {
 
             let header = entry.header();
             let path = header.path()?.to_path_buf();
+
+            if path == Path::new(MANIFEST_FILE) {
+                let manifest: PackManifest = serde_json::from_reader(entry)?;
+                contents.reserve(manifest.file_count);
+                skipped.reserve(manifest.entry_count - manifest.file_count);
+                continue;
+            }
+
             if !header.entry_type().is_file() {
                 #[cfg(feature = "collect-errors")]
                 skipped.push(Skipped::NotAFile(path));

@@ -1,9 +1,9 @@
-pub mod transform;
 pub mod pack;
+pub mod transform;
 
 #[allow(unused)]
 pub use alpacker::pack::*;
-use alpacker::{Assets, JsonIoError, MANIFEST_FILE, Pack, PackMeta};
+use alpacker::{Assets, JsonIoError, MANIFEST_FILE, Pack, PackManifest, PackMeta};
 use std::{
     borrow::Cow,
     collections::HashMap,
@@ -13,13 +13,18 @@ use std::{
     path::{Path, PathBuf},
     time::{SystemTime, UNIX_EPOCH},
 };
+use walkdir::WalkDir;
 
 /// Trait for creating a package from a directory.
 /// Implementing types must define how the package is created (`make`)
 /// and provide a file suffix (`suffix`).
 pub trait MakePack: Pack {
     /// Creates a package from the specified directory and writes it to `write`.
-    fn make(root: impl AsRef<Path>, write: impl io::Write) -> io::Result<()>;
+    fn make(
+        root: impl AsRef<Path>,
+        write: impl io::Write,
+        manifest: PackManifest,
+    ) -> io::Result<()>;
 
     /// Returns the file extension for the package type.
     fn extension() -> Cow<'static, str>;
@@ -99,7 +104,17 @@ impl PackBuilder {
 
     #[inline]
     pub fn write_pack<P: MakePack>(&self, write: impl io::Write) -> io::Result<()> {
-        P::make(&self.work_dir, write)
+        let manifest = PackManifest {
+            entry_count: WalkDir::new(&self.work_dir).into_iter().flatten().count(),
+            file_count: WalkDir::new(&self.work_dir)
+                .into_iter()
+                .flatten()
+                .filter_map(|entry| entry.metadata().ok())
+                .filter(|meta| meta.is_file())
+                .count(),
+        };
+
+        P::make(&self.work_dir, write, manifest)
     }
 
     pub fn insert_file(&mut self, path: impl AsRef<Path>, content: &[u8]) -> io::Result<()> {
@@ -166,12 +181,15 @@ impl AssetsBuilder {
     }
 
     /// Writes the asset manifest (`manifest.json`) containing metadata about packaged assets.
-    pub fn write_manifest(self) -> Result<(), JsonIoError> {
+    pub fn write_manifest(self, allow_overwrite: bool) -> Result<(), JsonIoError> {
         let manifest_path = self.root.join(MANIFEST_FILE);
 
         let assets = Assets::new(self.packs_dir, self.packs);
 
-        let file = File::create_new(manifest_path)?;
+        let file = match allow_overwrite {
+            true => File::create(manifest_path),
+            false => File::create_new(manifest_path),
+        }?;
         serde_json::to_writer(file, &assets)?;
 
         Ok(())

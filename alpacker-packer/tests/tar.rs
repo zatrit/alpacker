@@ -15,7 +15,7 @@ fn test_tar_zstd_pack() -> TestResult {
 
     AssetsBuilder::new(&test_dir, "./")?
         .add_pack::<TarZstPack>("test", &pack)?
-        .write_manifest()?;
+        .write_manifest(false)?;
 
     let manifest_path = test_dir.join(MANIFEST_FILE);
     assert!(

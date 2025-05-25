@@ -4,7 +4,10 @@ use std::{
     path::Path,
 };
 
-use alpacker::pack::codec::{Decode, EncodedPack};
+use alpacker::{
+    PackManifest,
+    pack::codec::{Decode, EncodedPack},
+};
 
 use crate::MakePack;
 
@@ -21,8 +24,8 @@ pub trait Encode {
 }
 
 impl<P: MakePack, C: Encode + Decode> MakePack for EncodedPack<P, C> {
-    fn make(root: impl AsRef<Path>, write: impl Write) -> io::Result<()> {
-        P::make(root, C::encode(write)?)
+    fn make(root: impl AsRef<Path>, write: impl Write, manifest: PackManifest) -> io::Result<()> {
+        P::make(root, C::encode(write)?, manifest)
     }
 
     fn extension() -> Cow<'static, str> {
