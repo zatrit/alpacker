@@ -3,7 +3,7 @@ pub mod transform;
 
 #[allow(unused)]
 pub use alpacker::pack::*;
-use alpacker::{Assets, JsonIoError, MANIFEST_FILE, Pack, PackManifest, PackMeta};
+use alpacker::{Assets, JsonIoError, MANIFEST_FILE, PackManifest, PackMeta};
 use std::{
     borrow::Cow,
     collections::HashMap,
