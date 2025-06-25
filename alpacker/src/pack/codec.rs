@@ -23,7 +23,7 @@ pub trait Decode {
 /// # Type Parameters
 /// - `P`: The base pack implementation (e.g. `TarPack`)
 /// - `C`: A codec that implements [`Decode`]
-pub struct EncodedPack<P: Pack, C> {
+pub struct EncodedPack<P, C> {
     pub pack: P,
     _d: PhantomData<C>,
 }

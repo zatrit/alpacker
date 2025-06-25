@@ -18,7 +18,7 @@ use walkdir::WalkDir;
 /// Trait for creating a package from a directory.
 /// Implementing types must define how the package is created (`make`)
 /// and provide a file suffix (`suffix`).
-pub trait MakePack: Pack {
+pub trait MakePack {
     /// Creates a package from the specified directory and writes it to `write`.
     fn make(
         root: impl AsRef<Path>,
