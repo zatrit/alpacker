@@ -66,6 +66,7 @@ impl<S: BuildHasher + Default> Pack for TarPack<S> {
             if path == Path::new(MANIFEST_FILE) {
                 let manifest: PackManifest = serde_json::from_reader(entry)?;
                 contents.reserve(manifest.file_count);
+                #[cfg(feature = "collect-errors")]
                 skipped.reserve(manifest.entry_count - manifest.file_count);
                 continue;
             }
