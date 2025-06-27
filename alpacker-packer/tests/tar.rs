@@ -4,7 +4,7 @@ use common::*;
 use testdir::testdir;
 
 use alpacker::{Assets, MANIFEST_FILE, Pack};
-use alpacker_packer::{AssetsBuilder, PackBuilder, TarZstPack};
+use alpacker_packer::{AssetsBuilder, PackBuilder, TarZstPack, tar::Skipped};
 
 #[test]
 fn test_tar_zstd_pack() -> TestResult {
@@ -27,10 +27,14 @@ fn test_tar_zstd_pack() -> TestResult {
     let assets = Assets::load_from_dir(test_dir)?;
 
     let mut pack = assets.load_pack::<TarZstPack>("test")?;
-    assert!(
-        pack.skipped().is_empty(),
-        "Expected no skipped files, but some were skipped"
+
+    let skipped = pack.skipped();
+    assert_eq!(
+        skipped[0],
+        Skipped::Manifest,
+        "Expected the manifest to be skipped"
     );
+    assert_eq!(skipped.len(), 1, "Expected only the manifest to be skipped");
 
     let data = pack.get::<String>("myfile.txt")?;
     assert_eq!(

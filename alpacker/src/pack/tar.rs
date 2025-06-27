@@ -19,7 +19,7 @@ pub struct TarPack<S = DefaultHasher> {
 }
 
 /// Enum representing the reasons why a file was skipped.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Skipped {
     /// The path does not point to a valid file (e.g., it could be a directory).
     NotAFile(PathBuf),
