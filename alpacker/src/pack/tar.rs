@@ -23,6 +23,9 @@ pub struct TarPack<S = DefaultHasher> {
 pub enum Skipped {
     /// The path does not point to a valid file (e.g., it could be a directory).
     NotAFile(PathBuf),
+
+    /// The file is a manifest located at [MANIFEST_FILE].
+    Manifest,
 }
 
 impl TarPack {
@@ -66,8 +69,10 @@ impl<S: BuildHasher + Default> Pack for TarPack<S> {
             if path == Path::new(MANIFEST_FILE) {
                 let manifest: PackManifest = serde_json::from_reader(entry)?;
                 contents.reserve(manifest.file_count);
-                #[cfg(feature = "collect-errors")]
-                skipped.reserve(manifest.entry_count - manifest.file_count);
+                if cfg!(feature = "collect-errors") {
+                    skipped.reserve(manifest.entry_count - manifest.file_count + 1);
+                    skipped.push(Skipped::Manifest);
+                }
                 continue;
             }
 
